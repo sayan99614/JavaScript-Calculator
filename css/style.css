@@ -90,3 +90,6 @@ sup{
     font-size: 26px;
     font-weight: 400;
 }
+#mc,#mr{
+    color: rgb(211,211,211);
+}
