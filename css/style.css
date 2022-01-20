@@ -9,7 +9,7 @@
 #boxlayout{
     width:500px;
 }
-#inputNumber{
+#display{
     margin-top: 5px;
     height: 100px;
     font-size: 50px;
@@ -66,8 +66,8 @@
 .box{
     border: none;
     margin-top: 1.2px;
-    margin-left: 1.2px ;
-    margin-right: 1.2px;
+    margin-left: 1px ;
+    margin-right: 1px;
     margin-bottom: 1.2px;
     height: 60px;
     width: 90px;
