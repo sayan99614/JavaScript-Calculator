@@ -85,8 +85,13 @@ sup{
     font-size: 22px;
     font-weight: 300;
 }
-#white{
-    background-color: rgb(252,252,252);
+.white{
+    background-color: rgb(255, 255, 255);
+    font-size: 26px;
+    font-weight: 400;
+}
+.equal{
+    background-color: rgb(146,194,232);
     font-size: 26px;
     font-weight: 400;
 }
