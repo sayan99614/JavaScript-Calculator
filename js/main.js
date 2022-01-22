@@ -467,3 +467,11 @@ function calculator(btn) {
 function updateOutput(operation) {
   display.value = operation;
 }
+document.getElementById("deg").addEventListener("click",()=>{
+  if(document.getElementById("deg").value=="DEG"){
+    document.getElementById("deg").value="RED";
+  }else{
+    document.getElementById("deg").value="DEG";
+  }
+});
+
