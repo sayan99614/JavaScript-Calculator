@@ -150,7 +150,7 @@ let cal_btn = [
   },
   {
     name: "square-root",
-    symbol: "√",
+    symbol: "²√",
     formula: "Math.sqrt",
     type: "math_function",
   },
@@ -313,11 +313,24 @@ let cal_btn = [
   },
 ];
 
-cal_btn.forEach((button) => {
-  container.innerHTML += `<button class="box ${
-    button.classname ? `${button.classname}` : ``
-  }" id="${button.name}">${button.symbol}</button>`;
-});
+function renderBtns(isnew) {
+  if (isnew) {
+    cal_btn.forEach((button) => {
+      container.innerHTML += `<button class="box ${
+        button.classname ? `${button.classname}` : ``
+      }" id="${button.name}">${button.symbol}</button>`;
+    });
+  } else {
+    container.innerHTML = "";
+    cal_btn.forEach((button) => {
+      container.innerHTML += `<button class="box ${
+        button.classname ? `${button.classname}` : ``
+      }" id="${button.name}">${button.symbol}</button>`;
+    });
+  }
+}
+
+renderBtns(true);
 
 trigo_btn.forEach((button) => {
   document.querySelector(
@@ -357,7 +370,10 @@ func.addEventListener("click", (event) => {
   });
 });
 
+let is2nd = false;
+
 function calculator(btn) {
+  console.log(btn);
   if (btn.type === "operator") {
     data.operation.push(btn.symbol);
     data.formula.push(btn.formula);
@@ -388,13 +404,28 @@ function calculator(btn) {
 
       data.operation.push("2)");
       data.formula.push("2)");
+    } else if (btn.name == "cube") {
+      symbol = "^(";
+      formula = btn.formula;
+      data.operation.push(symbol);
+      data.formula.push(formula);
+
+      data.operation.push("3)");
+      data.formula.push("3)");
     } else if (btn.name == "tentopx") {
       symbol = "10^(";
       formula = btn.formula;
       data.operation.push(symbol);
       data.formula.push("10");
       data.formula.push(formula);
-    } else if (btn.name == "1byx") {
+    }else if(btn.name=="twotopx"){
+      symbol = "2^(";
+      formula = btn.formula;
+      data.operation.push(symbol);
+      data.formula.push("2");
+      data.formula.push(formula);
+    } 
+    else if (btn.name == "1byx") {
       symbol = "1/(";
       formula = btn.formula;
       data.operation.push(symbol);
@@ -446,6 +477,44 @@ function calculator(btn) {
       data.formula.pop();
       console.log("clicked");
       updateOutput(data.operation.join(""));
+    } else if (btn.name == "2nd") {
+      if (!is2nd) {
+        cal_btn.forEach((button) => {
+          if (button.name == "square") {
+            button.formula=POWER; 
+            button.name= "cube";
+            button.symbol= "x³";
+          } else if (button.name == "square-root") {
+            button.formula="Math.cbrt";
+            button.name="cube-root";
+            button.symbol = "³√";
+          } else if (button.name == "tentopx") {
+            button.formula=POWER;
+            button.symbol = "2<sup>x</sup>";
+            button.name="twotopx";
+          }
+        });
+        renderBtns(is2nd);
+        is2nd = true;
+      } else {
+        cal_btn.forEach((button) => {
+          if (button.name == "cube") {
+            button.formula=POWER; 
+            button.name= "square";
+            button.symbol= "x²";
+          } else if (button.name == "cube-root") {
+            button.formula="Math.sqrt";
+            button.name="square-root";
+            button.symbol = "²√";
+          } else if (button.name == "twotopx") {
+            button.formula=POWER;
+            button.symbol = "10<sup>x</sup>";
+            button.name="tentopx";
+          }
+        });
+        renderBtns(!is2nd);
+        is2nd = false;
+      }
     } else if (btn.name == "plusorminys") {
       data.operation[pointer] = "-" + data.operation[pointer];
       data.formula[pointer] = "-" + data.formula[pointer];
@@ -691,7 +760,7 @@ memory.addEventListener("click", (event) => {
         // if (window.localStorage.length != 0) {
         //   index += window.localStorage.length;
         // }
-        if(localStorage.getItem(`${index}`)==null){
+        if (localStorage.getItem(`${index}`) == null) {
           let obj = {
             key: index,
             value: item,
