@@ -468,9 +468,12 @@ function calculator(btn) {
       formula_str = formula_str.replace(toReplace, replacement);
     });
 
-    NUMBERS.forEach(factorial=>{
-      formula_str=formula_str.replace(factorial.toReplace,factorial.replacement);
-    })
+    NUMBERS.forEach((factorial) => {
+      formula_str = formula_str.replace(
+        factorial.toReplace,
+        factorial.replacement
+      );
+    });
 
     let result;
     try {
@@ -531,24 +534,25 @@ function factorialNumberGetter(formula, FACTORIAL_SEARCH_RESULT) {
         if (formula[previous_index] == OPERATOR) is_operator = true;
       });
 
-
-      if ((is_operator && parenthesis_count == 0)) break;
+      if (is_operator && parenthesis_count == 0) break;
 
       number.unshift(formula[previous_index]);
       previous_index--;
     }
-  let number_str=number.join('');
-  const factorial="factorial(",close_parenthesis=")";
-  let times=factorial_sequence+1;
-  let toReplace=number_str+FACTORIAL.repeat(times);
-  let replacement=factorial.repeat(times)+number_str+close_parenthesis.repeat(times);    
-  
-  numbers.push({
-    toReplace:toReplace,
-    replacement:replacement
-  })
+    let number_str = number.join("");
+    const factorial = "factorial(",
+      close_parenthesis = ")";
+    let times = factorial_sequence + 1;
+    let toReplace = number_str + FACTORIAL.repeat(times);
+    let replacement =
+      factorial.repeat(times) + number_str + close_parenthesis.repeat(times);
 
-  factorial_sequence=0;
+    numbers.push({
+      toReplace: toReplace,
+      replacement: replacement,
+    });
+
+    factorial_sequence = 0;
   });
   return numbers;
 }
@@ -642,3 +646,89 @@ function gamma(n) {
     return Math.sqrt(2 * Math.PI) * Math.pow(t, n + 0.5) * Math.exp(-t) * x;
   }
 }
+
+//memory part
+let memory = document.getElementById("memory");
+let memarr = [];
+let index = 0;
+let count_ms = 0;
+memory.addEventListener("click", (event) => {
+  console.log(window.localStorage);
+  switch (event.target.value) {
+    //memory all clear
+    case "MC":
+      memarr = [];
+      window.localStorage.clear();
+      break;
+    //memory recall
+    case "MR":
+      if (memarr.length != 0 && index == 0) {
+        data.formula.push(memarr[index]);
+        data.operation.push(memarr[index]);
+        updateOutput(data.formula.join(""));
+      }
+      index++;
+      break;
+    //memory add
+    case "M+":
+      if (
+        data.formula.length == 1 &&
+        !(
+          data.formula.join("").charCodeAt(0) >= 33 &&
+          data.formula.join("").charCodeAt(0) <= 47
+        )
+      ) {
+        memarr.push(data.formula[0]);
+      }
+      break;
+    //memory substruct
+    case "M-":
+      memarr.pop();
+      break;
+    //memory store
+    case "MS":
+      memarr.map((item, index) => {
+        // if (window.localStorage.length != 0) {
+        //   index += window.localStorage.length;
+        // }
+        if(localStorage.getItem(`${index}`)==null){
+          let obj = {
+            key: index,
+            value: item,
+          };
+          window.localStorage.setItem(`${index}`, JSON.stringify(obj));
+        }
+      });
+      console.log(window.localStorage);
+      break;
+  }
+  setdim(memarr.length);
+});
+
+function setdim(isdim) {
+  let mc = document.getElementById(`mc`);
+  let mr = document.getElementById(`mr`);
+  if (isdim > 0) {
+    mc.style.color = "black";
+    mr.style.color = "black";
+  } else {
+    mc.style.color = "rgb(211, 211, 211)";
+    mr.style.color = "rgb(211, 211, 211)";
+  }
+}
+
+window.onload = () => {
+  fetchFromStorage();
+};
+
+const fetchFromStorage = function () {
+  setdim(memarr.length);
+  const len = window.localStorage.length;
+  for (let i = 0; i < len; i++) {
+    let val = window.localStorage.getItem(`${i}`);
+    let obj = JSON.parse(val);
+    memarr.push(obj.value);
+  }
+  setdim(memarr.length);
+  return;
+};
