@@ -2,13 +2,52 @@ let container = document.querySelector(".grid-container");
 let trigonometry = document.querySelector(".trigonometry");
 let func = document.querySelector(".function");
 let display = document.getElementById("display");
+let fe = document.getElementById("fe");
+let isfe = false;
 const operators = ["+", "-", "*", "/"];
 const POWER = "POWER(",
-  FACTORIAL = "factorial(";
+  IN = "In(",
+  FACTORIAL = "factorial(",
+  DMS = "dms(",
+  DEG = "degg(";
 let data = {
   operation: [],
   formula: [],
 };
+fe.addEventListener("click", () => {
+  isfe = !isfe;
+  if (isfe) {
+    if (
+      data.formula.length > 0 &&
+      data.operation.length > 0 &&
+      typeof parseInt(data.operation.join("")) == "number"
+    ) {
+      let t1 = parseInt(data.formula.join("")).toExponential();
+      data.formula = [];
+      data.formula.push(t1);
+      let t2 = parseInt(data.operation.join("")).toExponential();
+      data.operation = [];
+      data.operation.push(t2);
+      updateOutput(data.operation.join(""));
+    }
+    fe.style.borderBottom = "1px solid black";
+  } else {
+    if (
+      data.formula.length > 0 &&
+      data.operation.length > 0 &&
+      typeof parseInt(data.operation.join("")) == "number"
+    ) {
+      let op = eval(data.operation.join(""));
+      let fo = eval(data.formula.join(""));
+      data.operation = [];
+      data.formula = [];
+      data.operation.push(op);
+      data.formula.push(fo);
+      updateOutput(data.operation.join(""));
+    }
+    fe.style.borderBottom = "none";
+  }
+});
 var pointer = data.formula.length;
 let trigo_btn = [
   {
@@ -76,13 +115,13 @@ let fun_btn = [
   {
     name: "dms",
     symbol: "dms",
-    formula: "",
+    formula: DMS,
     type: "math_function",
   },
   {
     name: "deg",
     symbol: "deg",
-    formula: "",
+    formula: DEG,
     type: "math_function",
   },
 ];
@@ -278,9 +317,9 @@ let cal_btn = [
     type: "operator",
   },
   {
-    name: "inverse",
+    name: "natural-log",
     symbol: "In",
-    formula: POWER,
+    formula: IN,
     type: "math_function",
   },
   {
@@ -391,6 +430,21 @@ function calculator(btn) {
       formula = btn.formula;
       data.operation.push(symbol);
       data.formula.push(formula);
+    } else if (btn.name == "dms") {
+      symbol = "dms(";
+      formula = btn.formula;
+      data.operation.push(symbol);
+      data.formula.push(formula);
+    } else if (btn.name == "deg") {
+      symbol = "deg(";
+      formula = btn.formula;
+      data.operation.push(symbol);
+      data.formula.push(formula);
+    } else if (btn.name == "natural-log") {
+      symbol = "In(";
+      formula = btn.formula;
+      data.operation.push(symbol);
+      data.formula.push(formula);
     } else if (btn.name == "power") {
       symbol = "^(";
       formula = btn.formula;
@@ -418,14 +472,13 @@ function calculator(btn) {
       data.operation.push(symbol);
       data.formula.push("10");
       data.formula.push(formula);
-    }else if(btn.name=="twotopx"){
+    } else if (btn.name == "twotopx") {
       symbol = "2^(";
       formula = btn.formula;
       data.operation.push(symbol);
       data.formula.push("2");
       data.formula.push(formula);
-    } 
-    else if (btn.name == "1byx") {
+    } else if (btn.name == "1byx") {
       symbol = "1/(";
       formula = btn.formula;
       data.operation.push(symbol);
@@ -481,17 +534,17 @@ function calculator(btn) {
       if (!is2nd) {
         cal_btn.forEach((button) => {
           if (button.name == "square") {
-            button.formula=POWER; 
-            button.name= "cube";
-            button.symbol= "x³";
+            button.formula = POWER;
+            button.name = "cube";
+            button.symbol = "x³";
           } else if (button.name == "square-root") {
-            button.formula="Math.cbrt";
-            button.name="cube-root";
+            button.formula = "Math.cbrt";
+            button.name = "cube-root";
             button.symbol = "³√";
           } else if (button.name == "tentopx") {
-            button.formula=POWER;
+            button.formula = POWER;
             button.symbol = "2<sup>x</sup>";
-            button.name="twotopx";
+            button.name = "twotopx";
           }
         });
         renderBtns(is2nd);
@@ -499,26 +552,28 @@ function calculator(btn) {
       } else {
         cal_btn.forEach((button) => {
           if (button.name == "cube") {
-            button.formula=POWER; 
-            button.name= "square";
-            button.symbol= "x²";
+            button.formula = POWER;
+            button.name = "square";
+            button.symbol = "x²";
           } else if (button.name == "cube-root") {
-            button.formula="Math.sqrt";
-            button.name="square-root";
+            button.formula = "Math.sqrt";
+            button.name = "square-root";
             button.symbol = "²√";
           } else if (button.name == "twotopx") {
-            button.formula=POWER;
+            button.formula = POWER;
             button.symbol = "10<sup>x</sup>";
-            button.name="tentopx";
+            button.name = "tentopx";
           }
         });
         renderBtns(!is2nd);
         is2nd = false;
       }
     } else if (btn.name == "plusorminys") {
-      data.operation[pointer] = "-" + data.operation[pointer];
-      data.formula[pointer] = "-" + data.formula[pointer];
-      updateOutput(data.operation.join(""));
+      if (data.operation.length > 0 && data.formula.length > 0) {
+        data.operation[pointer] = "-" + data.operation[pointer];
+        data.formula[pointer] = "-" + data.formula[pointer];
+        updateOutput(data.operation.join(""));
+      }
     }
   } else if (btn.type === "calculate") {
     let formula_str = data.formula.join("");
@@ -693,6 +748,25 @@ function factorial(n) {
   return n * factorial(n - 1);
 }
 
+function In(n) {
+  return 2.303 * Math.log10(n);
+}
+function dms(num) {
+  let deg = Math.floor(num);
+  let m = Math.round((num - deg) * 60);
+  let s = Math.round(((num - deg) * 60 - m) * 60);
+  return `${deg}.${m}`;
+}
+function degg(num) {
+  let p = 0;
+  if (num - Math.floor(num) !== 0) {
+    p = 5;
+    console.log(true);
+  }
+  let deg = Math.floor(num);
+  let m = ((num - deg) / 60) * 100;
+  return deg + m;
+}
 // GAMMA FUNCTINON
 function gamma(n) {
   // accurate to about 15 decimal places
