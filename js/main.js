@@ -1,3 +1,6 @@
+window.onload = () => {
+  fetchFromStorage();
+};
 let container = document.querySelector(".grid-container");
 let trigonometry = document.querySelector(".trigonometry");
 let func = document.querySelector(".function");
@@ -793,8 +796,8 @@ function gamma(n) {
 //memory part
 let memory = document.getElementById("memory");
 let memarr = [];
-let index = 0;
 let count_ms = 0;
+let check=0;
 memory.addEventListener("click", (event) => {
   console.log(window.localStorage);
   switch (event.target.value) {
@@ -805,12 +808,12 @@ memory.addEventListener("click", (event) => {
       break;
     //memory recall
     case "MR":
-      if (memarr.length != 0 && index == 0) {
-        data.formula.push(memarr[index]);
-        data.operation.push(memarr[index]);
+      if (memarr.length!=0&& check==0) {
+        data.formula.push(memarr[memarr.length-1]);
+        data.operation.push(memarr[memarr.length-1]);
         updateOutput(data.formula.join(""));
+        check++;
       }
-      index++;
       break;
     //memory add
     case "M+":
@@ -859,10 +862,6 @@ function setdim(isdim) {
     mr.style.color = "rgb(211, 211, 211)";
   }
 }
-
-window.onload = () => {
-  fetchFromStorage();
-};
 
 const fetchFromStorage = function () {
   setdim(memarr.length);
